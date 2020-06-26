@@ -8,6 +8,9 @@ variables:
   tag: '$(Build.BuildId)'
   imagePullSecret: 'secret'
   containerRegistryConnection: 'masuda@fsi.co.jp (masudafsico.onmicrosoft.com) acr'
+  aKsConnection: 'masuda@fsi.co.jp (masudafsico.onmicrosoft.com) aks'
+
+
 
 stages:
 - stage: 'Build'
@@ -57,3 +60,11 @@ stages:
           steps:
           - download: current
             artifact: manifests
+    - task: KubernetesManifest@0
+      displayName: Create imagePullSecret
+      inputs:
+      action: createSecret
+      secretName: $(imagePullSecret)
+      dockerRegistryEndpoint: '$(containerRegistryConnection)'
+      kubernetesServiceConnection: '$(aKsConnection)'
+      namespace: 'default'
